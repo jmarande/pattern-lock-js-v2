@@ -3,11 +3,86 @@ import { PatternLock } from '../src/pattern-lock.js';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const ARROW_MARKER_ID = 'forensic-direction-arrow';
 
+const translations = {
+  fr: {
+    pageTitle: 'Pattern Lock JS v2 — Outil forensic',
+    title: 'Visualiseur de schéma Android',
+    lead: 'Tracer, saisir et documenter un schéma Android sans dépendance externe.',
+    clear: 'Effacer',
+    copyImage: 'Copier l’image',
+    imageCopied: 'Image copiée',
+    copyFailed: 'Copie impossible',
+    exportSvg: 'Exporter SVG',
+    inputLabel: 'Saisir un motif',
+    show: 'Afficher',
+    formats: 'Formats acceptés :',
+    android: 'Android 1–9',
+    coordinates: 'Coordonnées',
+    ruleTitle: 'Règle Android appliquée :',
+    ruleText: 'lorsqu’un segment traverse exactement un point intermédiaire non encore sélectionné, ce point est ajouté automatiquement.',
+    exportLabel: 'Sens du code',
+    footer: 'MIT · réécriture moderne inspirée de tympanix/pattern-lock-js',
+    github: 'Voir le projet sur GitHub',
+    language: 'Langue',
+  },
+  en: {
+    pageTitle: 'Pattern Lock JS v2 — Forensic Tool',
+    title: 'Android Pattern Visualizer',
+    lead: 'Draw, enter and document an Android unlock pattern with no external dependency.',
+    clear: 'Clear',
+    copyImage: 'Copy image',
+    imageCopied: 'Image copied',
+    copyFailed: 'Copy failed',
+    exportSvg: 'Export SVG',
+    inputLabel: 'Enter a pattern',
+    show: 'Display',
+    formats: 'Accepted formats:',
+    android: 'Android 1–9',
+    coordinates: 'Coordinates',
+    ruleTitle: 'Android rule applied:',
+    ruleText: 'when a segment crosses an intermediate point that has not yet been selected, that point is automatically added.',
+    exportLabel: 'Pattern direction',
+    footer: 'MIT · modern rewrite inspired by tympanix/pattern-lock-js',
+    github: 'View project on GitHub',
+    language: 'Language',
+  },
+};
+
 const svg = document.querySelector('#lock');
 const input = document.querySelector('#pattern-input');
 const oneBased = document.querySelector('#one-based');
 const coords = document.querySelector('#coords');
 const copyButton = document.querySelector('#copy');
+
+let currentLanguage = localStorage.getItem('pattern-lock-language');
+if (!translations[currentLanguage]) {
+  currentLanguage = navigator.language?.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+}
+
+function t(key) {
+  return translations[currentLanguage][key] ?? key;
+}
+
+function setLanguage(language) {
+  if (!translations[language]) return;
+  currentLanguage = language;
+  localStorage.setItem('pattern-lock-language', language);
+  document.documentElement.lang = language;
+  document.title = t('pageTitle');
+
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
+    const key = element.dataset.i18n;
+    element.textContent = t(key);
+  });
+
+  document.querySelectorAll('[data-lang]').forEach((button) => {
+    const active = button.dataset.lang === language;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+
+  document.querySelector('[data-i18n-aria="github"]')?.setAttribute('aria-label', t('github'));
+}
 
 const lock = new PatternLock(svg, {
   onPattern(result) {
@@ -112,7 +187,7 @@ function buildShareSvgMarkup() {
       <g transform="translate(140 70)">
         ${new XMLSerializer().serializeToString(clone)}
       </g>
-      <text class="share-label" x="450" y="735" text-anchor="middle">Sens du code</text>
+      <text class="share-label" x="450" y="735" text-anchor="middle">${xmlEscape(t('exportLabel'))}</text>
       <text class="share-value" x="450" y="785" text-anchor="middle">${xmlEscape(androidFormat)}</text>
     </svg>
   `.trim();
@@ -135,7 +210,7 @@ function svgMarkupToPngBlob(markup) {
       canvas.toBlob((pngBlob) => {
         URL.revokeObjectURL(url);
         if (!pngBlob) {
-          reject(new Error('Impossible de générer l’image PNG.'));
+          reject(new Error('Unable to generate PNG image.'));
           return;
         }
         resolve(pngBlob);
@@ -144,7 +219,7 @@ function svgMarkupToPngBlob(markup) {
 
     image.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('Impossible de charger l’image SVG.'));
+      reject(new Error('Unable to load SVG image.'));
     };
 
     image.src = url;
@@ -156,7 +231,7 @@ async function copyImageToClipboard() {
   const pngBlob = await svgMarkupToPngBlob(markup);
 
   if (!window.ClipboardItem || !navigator.clipboard?.write) {
-    throw new Error('La copie d’image n’est pas prise en charge sur ce navigateur.');
+    throw new Error('Image clipboard is not supported by this browser.');
   }
 
   await navigator.clipboard.write([
@@ -165,6 +240,10 @@ async function copyImageToClipboard() {
     }),
   ]);
 }
+
+document.querySelectorAll('[data-lang]').forEach((button) => {
+  button.addEventListener('click', () => setLanguage(button.dataset.lang));
+});
 
 document.querySelector('#apply').addEventListener('click', applyInput);
 input.addEventListener('keydown', (event) => {
@@ -177,24 +256,23 @@ document.querySelector('#clear').addEventListener('click', () => {
 });
 
 copyButton.addEventListener('click', async () => {
-  const originalLabel = copyButton.textContent;
   copyButton.disabled = true;
 
   try {
     await copyImageToClipboard();
-    copyButton.textContent = 'Image copiée';
+    copyButton.textContent = t('imageCopied');
   } catch (error) {
     console.error(error);
-    copyButton.textContent = 'Copie impossible';
+    copyButton.textContent = t('copyFailed');
   } finally {
     window.setTimeout(() => {
-      copyButton.textContent = originalLabel;
+      copyButton.textContent = t('copyImage');
       copyButton.disabled = false;
     }, 1600);
   }
 });
 
-document.querySelector('#export-svg').addEventListener('click', async () => {
+document.querySelector('#export-svg').addEventListener('click', () => {
   const markup = buildShareSvgMarkup();
   const blob = new Blob([markup], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -205,4 +283,5 @@ document.querySelector('#export-svg').addEventListener('click', async () => {
   URL.revokeObjectURL(url);
 });
 
+setLanguage(currentLanguage);
 applyInput();
