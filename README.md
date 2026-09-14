@@ -1,10 +1,11 @@
 # Pattern Lock JS v2
 
-A modern, dependency-free Android pattern lock component and forensic visualizer, inspired by [`tympanix/pattern-lock-js`](https://github.com/tympanix/pattern-lock-js).
+**Android pattern visualizer for digital forensics — French / English interface.**  
+**Visualiseur de schémas Android pour la criminalistique numérique — interface français / anglais.**
 
-[**▶ Standard demo**](https://jmarande.github.io/pattern-lock-js-v2/) · [**🔎 Forensic demo**](https://jmarande.github.io/pattern-lock-js-v2/demo/) · [Original project](https://github.com/tympanix/pattern-lock-js)
+[**▶ Open the forensic demo / Ouvrir la démo forensic**](https://jmarande.github.io/pattern-lock-js-v2/)
 
-**Français** · **English below**
+Modern, dependency-free rewrite inspired by [`tympanix/pattern-lock-js`](https://github.com/tympanix/pattern-lock-js).
 
 ---
 
@@ -12,33 +13,34 @@ A modern, dependency-free Android pattern lock component and forensic visualizer
 
 ### Présentation
 
-**Pattern Lock JS v2** est une réécriture moderne du projet `pattern-lock-js` dédiée à l’affichage, au tracé et à l’exploitation de schémas de verrouillage Android.
+**Pattern Lock JS v2** est un outil web léger destiné à **tracer, visualiser et documenter un schéma de verrouillage Android** dans un contexte forensic.
 
-Le projet conserve l’approche légère en SVG, tout en remplaçant l’ancienne implémentation jQuery/Gulp par du **JavaScript natif**, les **Pointer Events** et un moteur de motif indépendant du DOM.
+Le projet reprend l’idée du composant original `pattern-lock-js`, mais avec une implémentation moderne en **JavaScript natif**, sans jQuery ni dépendance d’exécution.
 
-### Démonstrations
+Il n’existe désormais qu’une seule interface publique : **l’interface forensic**.
 
-- **Démo standard** : tracé simple d’un schéma Android, proche de l’expérience du projet original.  
-  https://jmarande.github.io/pattern-lock-js-v2/
-- **Démo forensic** : visualisation et exploitation d’un schéma dans un contexte d’analyse numérique.  
-  https://jmarande.github.io/pattern-lock-js-v2/demo/
+### Démo
 
-### Fonctions principales
+👉 **https://jmarande.github.io/pattern-lock-js-v2/**
 
-- JavaScript natif, **aucune dépendance d’exécution**.
-- Compatible souris, tactile et stylet via **Pointer Events**.
-- Gestion de la règle Android d’ajout automatique du point intermédiaire.
-- Affichage du **sens de tracé avec des flèches**.
-- Affichage du motif au format **Android 1–9**.
+L’interface peut être basculée directement entre **Français** et **English** avec le sélecteur `FR / EN`.
+
+### Fonctions
+
+- Tracé d’un schéma Android à la souris, au tactile ou au stylet.
+- Saisie manuelle d’un motif existant.
+- Application de la règle Android des points intermédiaires.
+- Affichage du **sens du tracé avec des flèches**.
+- Affichage de la séquence **Android 1–9**.
 - Affichage des **coordonnées** du tracé.
-- Saisie manuelle et rendu d’un motif existant.
-- Mode lecture seule pour la visualisation.
-- **Copie du schéma sous forme d’image PNG dans le presse-papiers**, avec le libellé **« Sens du code »** et la séquence Android sous le graphique.
-- Export du schéma au format **SVG**.
-- Fonctionnement entièrement hors ligne après chargement des fichiers.
-- Moteur de motif testé indépendamment de l’interface.
+- Copie du résultat sous forme **d’image PNG dans le presse-papiers**.
+- L’image copiée contient le schéma, les flèches de direction et la mention **« Sens du code »** suivie de la séquence Android.
+- Export du résultat au format **SVG**.
+- Interface **français / anglais**.
+- Fonctionnement sans dépendance externe au runtime.
+- Moteur de motif indépendant du DOM et couvert par des tests unitaires.
 
-### Utilisation
+### Utilisation comme composant
 
 ```html
 <link rel="stylesheet" href="./src/pattern-lock.css">
@@ -49,8 +51,7 @@ Le projet conserve l’approche légère en SVG, tout en remplaçant l’ancienn
 
   const lock = new PatternLock(document.querySelector('#lock'), {
     onPattern(result) {
-      console.log(result.oneBased);     // [1, 2, 5, 8]
-      console.log(result.coordinates);  // [{ row: 0, col: 0 }, ...]
+      console.log(result.oneBasedString); // "1-2-5-8"
     }
   });
 </script>
@@ -62,14 +63,6 @@ Afficher un motif existant :
 lock.setPattern('1-2-5-8');
 ```
 
-La règle Android est appliquée par défaut. Par exemple, `1-3` devient `1-2-3` si le point intermédiaire n’a pas déjà été utilisé.
-
-Pour afficher une séquence littérale sans appliquer cette règle :
-
-```js
-lock.setPattern('1-3', { applyAndroidRules: false });
-```
-
 ### Développement local
 
 ```bash
@@ -79,8 +72,9 @@ npm run serve
 
 Puis ouvrir :
 
-- Démo standard : `http://localhost:8080/`
-- Démo forensic : `http://localhost:8080/demo/`
+```text
+http://localhost:8080/
+```
 
 ---
 
@@ -88,33 +82,34 @@ Puis ouvrir :
 
 ### Overview
 
-**Pattern Lock JS v2** is a modern rewrite of `pattern-lock-js` designed to draw, render and inspect Android pattern locks.
+**Pattern Lock JS v2** is a lightweight web tool designed to **draw, visualize and document Android unlock patterns** in a digital-forensics context.
 
-It keeps the original lightweight SVG approach while replacing the legacy jQuery/Gulp implementation with **native JavaScript**, **Pointer Events**, and a DOM-independent pattern engine.
+It is inspired by the original `pattern-lock-js` component, but uses a modern **native JavaScript** implementation with no jQuery and no runtime dependency.
 
-### Demos
+There is now a single public interface: the **forensic interface**.
 
-- **Standard demo**: simple Android pattern drawing, close to the original project experience.  
-  https://jmarande.github.io/pattern-lock-js-v2/
-- **Forensic demo**: pattern visualization and handling for digital-forensics-oriented workflows.  
-  https://jmarande.github.io/pattern-lock-js-v2/demo/
+### Demo
 
-### Main features
+👉 **https://jmarande.github.io/pattern-lock-js-v2/**
 
-- Native JavaScript with **no runtime dependency**.
-- Mouse, touch and stylus support through **Pointer Events**.
-- Android intermediate-node insertion rule.
-- **Directional arrows** showing the drawing order.
-- Android **1–9** representation.
-- Pattern **coordinates** display.
-- Manual input and rendering of an existing pattern.
-- Read-only visualization mode.
-- **Copy the diagram as a PNG image to the clipboard**, including the drawing and Android sequence below it.
-- SVG export.
-- Fully offline-capable once the files are loaded.
-- Pattern engine tested independently from the UI.
+The interface can be switched directly between **Français** and **English** using the `FR / EN` selector.
 
-### Usage
+### Features
+
+- Draw Android patterns with mouse, touch or stylus.
+- Manually enter an existing pattern.
+- Apply Android intermediate-node rules.
+- Display the **drawing direction with arrows**.
+- Display the **Android 1–9** sequence.
+- Display pattern **coordinates**.
+- Copy the result as a **PNG image directly to the clipboard**.
+- The copied image includes the pattern, direction arrows and the **“Pattern direction”** label followed by the Android sequence.
+- Export the result as **SVG**.
+- **French / English** interface.
+- No runtime dependency.
+- DOM-independent pattern engine with unit tests.
+
+### Component usage
 
 ```html
 <link rel="stylesheet" href="./src/pattern-lock.css">
@@ -125,8 +120,7 @@ It keeps the original lightweight SVG approach while replacing the legacy jQuery
 
   const lock = new PatternLock(document.querySelector('#lock'), {
     onPattern(result) {
-      console.log(result.oneBased);     // [1, 2, 5, 8]
-      console.log(result.coordinates);  // [{ row: 0, col: 0 }, ...]
+      console.log(result.oneBasedString); // "1-2-5-8"
     }
   });
 </script>
@@ -138,14 +132,6 @@ Render an existing pattern:
 lock.setPattern('1-2-5-8');
 ```
 
-The Android skip rule is applied by default. For example, `1-3` becomes `1-2-3` if the intermediate node has not already been used.
-
-To render a literal sequence without applying that rule:
-
-```js
-lock.setPattern('1-3', { applyAndroidRules: false });
-```
-
 ### Local development
 
 ```bash
@@ -155,8 +141,9 @@ npm run serve
 
 Then open:
 
-- Standard demo: `http://localhost:8080/`
-- Forensic demo: `http://localhost:8080/demo/`
+```text
+http://localhost:8080/
+```
 
 ---
 
@@ -164,16 +151,20 @@ Then open:
 
 ```text
 src/
-  pattern-engine.js   Pure pattern/grid rules
+  pattern-engine.js   Pure pattern/grid engine
   pattern-lock.js     Interactive SVG component
-  pattern-lock.css    Themeable styles
+  pattern-lock.css    Component styling
 
-demo/                 Forensic visualizer
-tests/                Node unit tests
+demo/
+  app.js              Forensic UI logic and FR/EN translations
+  style.css           Forensic interface styling
+
+tests/
+  pattern-engine.test.js
 ```
 
-## License & attribution
+## Attribution & license
 
-Released under the **MIT License**.
+Pattern Lock JS v2 is inspired by the original MIT-licensed [`tympanix/pattern-lock-js`](https://github.com/tympanix/pattern-lock-js) project.
 
-This project is a modern rewrite inspired by the original MIT-licensed [`tympanix/pattern-lock-js`](https://github.com/tympanix/pattern-lock-js). The original copyright and attribution are preserved in `LICENSE` and `NOTICE.md`.
+See [`LICENSE`](./LICENSE) and [`NOTICE.md`](./NOTICE.md).
