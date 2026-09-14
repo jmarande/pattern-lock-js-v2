@@ -1,0 +1,50 @@
+.patternlock {
+  --pattern-dot: #111827;
+  --pattern-line: #111827;
+  --pattern-active: #2563eb;
+  --pattern-success: #16a34a;
+  --pattern-error: #dc2626;
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.patternlock .lock-lines line {
+  stroke: var(--pattern-line);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: .55;
+}
+
+.patternlock .lock-lines .lock-preview {
+  opacity: .35;
+}
+
+.patternlock .lock-dots circle {
+  fill: var(--pattern-dot);
+  stroke: transparent;
+  stroke-width: 14;
+}
+
+.patternlock .lock-actives circle {
+  fill: var(--pattern-active);
+  opacity: .24;
+  transform-origin: center;
+  animation: patternlock-activate .14s ease-out 1;
+}
+
+.patternlock.success .lock-actives circle { fill: var(--pattern-success); }
+.patternlock.error .lock-actives circle { fill: var(--pattern-error); }
+.patternlock.readonly-pattern { cursor: default; }
+
+@keyframes patternlock-activate {
+  from { transform: scale(.25); opacity: 0; }
+  to { transform: scale(1); opacity: .24; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .patternlock .lock-actives circle { animation: none; }
+}

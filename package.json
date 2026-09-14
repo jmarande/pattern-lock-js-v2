@@ -1,0 +1,19 @@
+{
+  "name": "pattern-lock-js-v2",
+  "version": "2.0.0-alpha.1",
+  "description": "Dependency-free Android-style pattern lock renderer and forensic visualizer",
+  "type": "module",
+  "main": "./src/pattern-lock.js",
+  "exports": {
+    ".": "./src/pattern-lock.js",
+    "./engine": "./src/pattern-engine.js",
+    "./style.css": "./src/pattern-lock.css"
+  },
+  "scripts": {
+    "test": "node --test",
+    "serve": "python3 -m http.server 8080"
+  },
+  "keywords": ["pattern", "lock", "android", "forensics", "svg", "javascript"],
+  "license": "MIT",
+  "repository": "https://github.com/jmarande/pattern-lock-js-v2.git"
+}
