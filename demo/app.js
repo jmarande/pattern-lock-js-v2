@@ -112,7 +112,7 @@ function buildShareSvgMarkup() {
       <g transform="translate(140 70)">
         ${new XMLSerializer().serializeToString(clone)}
       </g>
-      <text class="share-label" x="450" y="735" text-anchor="middle">Format Android</text>
+      <text class="share-label" x="450" y="735" text-anchor="middle">Sens du code</text>
       <text class="share-value" x="450" y="785" text-anchor="middle">${xmlEscape(androidFormat)}</text>
     </svg>
   `.trim();
