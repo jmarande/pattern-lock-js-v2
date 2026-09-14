@@ -2,139 +2,63 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#ffffff">
-  <title>pattern-lock-js-v2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f3f4f6">
+  <title>Pattern Lock JS v2 — Outil forensic</title>
   <link rel="stylesheet" href="./src/pattern-lock.css">
-  <style>
-    * { box-sizing: border-box; }
-
-    html,
-    body {
-      margin: 0;
-      width: 100%;
-      min-height: 100%;
-      background: #fff;
-      color: #111;
-      overflow: hidden;
-    }
-
-    body {
-      min-height: 100dvh;
-      font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
-    }
-
-    .page {
-      position: relative;
-      width: 100%;
-      height: 100dvh;
-      min-height: 360px;
-    }
-
-    h1 {
-      height: 15dvh;
-      min-height: 72px;
-      margin: 0;
-      display: grid;
-      place-items: center;
-      font-size: clamp(2.2rem, 6vh, 4.8rem);
-      font-weight: 700;
-      letter-spacing: -.045em;
-      user-select: none;
-    }
-
-    #lock {
-      display: block;
-      width: 100%;
-      height: calc(85dvh - env(safe-area-inset-bottom));
-      min-height: 280px;
-      padding: 0 0 10dvh;
-      touch-action: none;
-      cursor: crosshair;
-    }
-
-    .patternlock {
-      --pattern-dot: #111;
-      --pattern-line: #111;
-      --pattern-active: #111;
-      --pattern-success: #14a44d;
-      --pattern-error: #dc2626;
-    }
-
-    .github-corner {
-      position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 2;
-      width: 78px;
-      height: 78px;
-      color: #fff;
-      background: #111;
-      clip-path: polygon(100% 0, 0 0, 100% 100%);
-      text-decoration: none;
-    }
-
-    .github-corner span {
-      position: absolute;
-      top: 15px;
-      right: 8px;
-      width: 42px;
-      text-align: center;
-      font-size: 11px;
-      font-weight: 800;
-      transform: rotate(45deg);
-      transform-origin: center;
-    }
-
-    .advanced-link {
-      position: absolute;
-      left: 18px;
-      bottom: max(14px, env(safe-area-inset-bottom));
-      z-index: 3;
-      color: #777;
-      font-size: 13px;
-      text-decoration: none;
-      opacity: .72;
-      transition: opacity .15s ease;
-    }
-
-    .advanced-link:hover,
-    .advanced-link:focus-visible {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    @media (max-width: 520px) {
-      h1 { font-size: clamp(1.8rem, 8vw, 3rem); }
-      .github-corner { width: 64px; height: 64px; }
-      .github-corner span { top: 11px; right: 5px; font-size: 9px; }
-      #lock { padding-bottom: 8dvh; }
-    }
-  </style>
+  <link rel="stylesheet" href="./demo/style.css">
 </head>
 <body>
-  <main class="page">
-    <a class="github-corner" href="https://github.com/jmarande/pattern-lock-js-v2" aria-label="Voir le projet sur GitHub">
-      <span>GitHub</span>
-    </a>
+  <main class="shell">
+    <header class="site-header">
+      <div class="header-main">
+        <p class="eyebrow">Pattern Lock JS v2</p>
+        <h1 data-i18n="title">Visualiseur de schéma Android</h1>
+        <p class="lead" data-i18n="lead">Tracer, saisir et documenter un schéma Android sans dépendance externe.</p>
+      </div>
 
-    <h1>pattern-lock-js-v2</h1>
-    <svg id="lock" aria-label="Dessiner un schéma Android"></svg>
+      <div class="header-tools">
+        <div class="language-switch" role="group" aria-label="Language / Langue">
+          <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a class="github-link" href="https://github.com/jmarande/pattern-lock-js-v2" data-i18n-aria="github" aria-label="Voir le projet sur GitHub">GitHub</a>
+      </div>
+    </header>
 
-    <a class="advanced-link" href="./demo/">outil forensic avancé →</a>
+    <section class="workspace">
+      <article class="card lock-card">
+        <svg id="lock" aria-label="Android pattern grid"></svg>
+        <div class="actions">
+          <button id="clear" type="button" data-i18n="clear">Effacer</button>
+          <button id="copy" type="button" data-i18n="copyImage">Copier l’image</button>
+          <button id="export-svg" type="button" data-i18n="exportSvg">Exporter SVG</button>
+        </div>
+      </article>
+
+      <article class="card panel">
+        <label for="pattern-input" data-i18n="inputLabel">Saisir un motif</label>
+        <div class="input-row">
+          <input id="pattern-input" value="1-2-5-8" autocomplete="off" spellcheck="false">
+          <button id="apply" type="button" data-i18n="show">Afficher</button>
+        </div>
+        <p class="hint"><span data-i18n="formats">Formats acceptés :</span> <code>1-2-5-8</code>, <code>1258</code>, <code>0,1,4,7</code>.</p>
+
+        <dl class="outputs">
+          <div><dt data-i18n="android">Android 1–9</dt><dd id="one-based">—</dd></div>
+          <div><dt data-i18n="coordinates">Coordonnées</dt><dd id="coords">—</dd></div>
+        </dl>
+
+        <div class="notice">
+          <strong data-i18n="ruleTitle">Règle Android appliquée :</strong>
+          <span data-i18n="ruleText">lorsqu’un segment traverse exactement un point intermédiaire non encore sélectionné, ce point est ajouté automatiquement.</span>
+        </div>
+      </article>
+    </section>
+
+    <footer data-i18n="footer">MIT · réécriture moderne inspirée de tympanix/pattern-lock-js</footer>
   </main>
-
-  <script type="module">
-    import { PatternLock } from './src/pattern-lock.js';
-
-    const lock = new PatternLock(document.querySelector('#lock'), {
-      onPattern(result) {
-        console.log('Pattern:', result.oneBasedString);
-        return true;
-      }
-    });
-
-    window.patternLock = lock;
-  </script>
+  <script type="module" src="./demo/app.js"></script>
 </body>
 </html>
